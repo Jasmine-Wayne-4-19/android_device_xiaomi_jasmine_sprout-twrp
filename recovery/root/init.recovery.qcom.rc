@@ -44,6 +44,7 @@ on fs
     symlink /dev/binderfs/vndbinder /dev/vndbinder
 
     install_keyring
+    export ANDROID_ROOT /system_root
 
 # Separate copy needed to use /sbin/linker64 instead of /system/bin/linker64
 service sbinqseecomd /sbin/qseecomd
