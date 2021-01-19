@@ -32,6 +32,17 @@ on fs
     chown system drmrpc /dev/qseecom
     chmod 0664 /dev/ion
     chown system system /dev/ion
+
+    mkdir /dev/binderfs
+    mount binder binder /dev/binderfs stats=global
+    chmod 0755 /dev/binderfs
+    chmod 0666 /dev/binderfs/hwbinder
+    chmod 0666 /dev/binderfs/binder
+    chmod 0666 /dev/binderfs/vndbinder
+    symlink /dev/binderfs/binder /dev/binder
+    symlink /dev/binderfs/hwbinder /dev/hwbinder
+    symlink /dev/binderfs/vndbinder /dev/vndbinder
+
     install_keyring
 
 # Separate copy needed to use /sbin/linker64 instead of /system/bin/linker64
@@ -107,7 +118,7 @@ service time_daemon /sbin/time_daemon
 
 on boot
     setprop sys.usb.config adb
-	
+
 on boot
     export LD_CONFIG_FILE /sbin/ld.config.txt
 
@@ -142,7 +153,7 @@ on property:vendor.sys.listeners.registered=true
 
 on property:sys.usb.config=mtp,adb
     restart time_daemon
-	
+
     mkdir /config
     mount configfs none /config
     mkdir /config/usb_gadget/g1 0770 shell shell
@@ -168,8 +179,7 @@ on property:sys.usb.ffs.ready=1
     mkdir /config/usb_gadget/g1/configs/b.1/strings/0x409 0770 shell shell
     write /config/usb_gadget/g1/configs/b.1/strings/0x409/configuration "adb"
     symlink /config/usb_gadget/g1/functions/ffs.adb /config/usb_gadget/g1/configs/b.1/f1
-    write /config/usb_gadget/g1/UDC ${sys.usb.controller}	
+    write /config/usb_gadget/g1/UDC ${sys.usb.controller}
 
-on init 
+on init
     write /sys/class/backlight/panel0-backlight/brightness 200
-
